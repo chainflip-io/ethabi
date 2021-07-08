@@ -33,6 +33,30 @@ pub struct Function {
 }
 
 impl Function {
+	/// Construct a Function working around the String limitations of Substrate
+	pub fn new(new_name: &str, inputs: Vec<Param>, outputs: Vec<Param>, constant: bool) -> Self {
+		Function {
+			name: new_name.into(),
+			inputs,
+			outputs,
+			constant,
+		}
+	}
+}
+
+/// Construct a Function from tuple working around the String limitations of Substrate
+impl From<(String, Vec<Param>, Vec<Param>, bool)> for Function {
+	fn from(params: (String, Vec<Param>, Vec<Param>, bool)) -> Self {
+		Function {
+			name: params.0.into(),
+			inputs: params.1,
+			outputs: params.2,
+			constant: params.3,
+		}
+	}
+}
+
+impl Function {
 	/// Returns all input params of given function.
 	fn input_param_types(&self) -> Vec<ParamType> {
 		self.inputs.iter().map(|p| p.kind.clone()).collect()

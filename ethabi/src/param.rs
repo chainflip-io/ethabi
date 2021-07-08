@@ -30,6 +30,25 @@ pub struct Param {
 	pub kind: ParamType,
 }
 
+impl Param {
+	/// Construct a Param working around the String limitations of Substrate
+	pub fn new(new_name: &str, kind: ParamType) -> Self {
+		Param {
+			name: new_name.into(),
+			kind,
+		}
+	}
+}
+// no_std friendly coming from Substrate
+impl From<(&str, ParamType)> for Param {
+	fn from(param: (&str, ParamType)) -> Self {
+		Param {
+			name: param.0.into(),
+			kind: param.1,
+		}
+	}
+}
+
 #[cfg(feature = "std")]
 impl<'a> Deserialize<'a> for Param {
 	fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
