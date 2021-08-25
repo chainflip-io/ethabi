@@ -43,24 +43,26 @@ pub struct Function {
 
 impl Function {
 	/// Construct a Function working around the String limitations of Substrate
-	pub fn new(new_name: &str, inputs: Vec<Param>, outputs: Vec<Param>, constant: bool) -> Self {
+	pub fn new(new_name: &str, inputs: Vec<Param>, outputs: Vec<Param>, constant: bool, state_mutability: StateMutability) -> Self {
 		Function {
 			name: new_name.into(),
 			inputs,
 			outputs,
 			constant,
+			state_mutability,
 		}
 	}
 }
 
 /// Construct a Function from tuple working around the String limitations of Substrate
-impl From<(String, Vec<Param>, Vec<Param>, bool)> for Function {
-	fn from(params: (String, Vec<Param>, Vec<Param>, bool)) -> Self {
+impl From<(String, Vec<Param>, Vec<Param>, bool, StateMutability)> for Function {
+	fn from(params: (String, Vec<Param>, Vec<Param>, bool, StateMutability)) -> Self {
 		Function {
 			name: params.0.into(),
 			inputs: params.1,
 			outputs: params.2,
 			constant: params.3,
+			state_mutability: params.4,
 		}
 	}
 }
