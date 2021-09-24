@@ -16,6 +16,7 @@ version = "14.1.0"
 default = ["std"]
 
 codec = ["ethereum-types/codec"]
+serialize = ["ethereum-types/serialize"]
 
 std = [
 	"anyhow/std",
