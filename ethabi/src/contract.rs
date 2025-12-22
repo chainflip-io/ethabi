@@ -205,17 +205,17 @@ impl Contract {
 	}
 
 	/// Iterate over all functions of the contract in arbitrary order.
-	pub fn functions(&self) -> Functions {
+	pub fn functions(&self) -> Functions<'_> {
 		Functions(self.functions.values().flatten())
 	}
 
 	/// Iterate over all events of the contract in arbitrary order.
-	pub fn events(&self) -> Events {
+	pub fn events(&self) -> Events<'_> {
 		Events(self.events.values().flatten())
 	}
 
 	/// Iterate over all errors of the contract in arbitrary order.
-	pub fn errors(&self) -> AbiErrors {
+	pub fn errors(&self) -> AbiErrors<'_> {
 		AbiErrors(self.errors.values().flatten())
 	}
 }

@@ -130,7 +130,7 @@ fn encode_head_tail_append(acc: &mut Vec<Word>, mediates: &[Mediate]) {
 	mediates.iter().for_each(|m| m.tail_append(acc));
 }
 
-fn mediate_token(token: &Token) -> Mediate {
+fn mediate_token(token: &Token) -> Mediate<'_> {
 	match token {
 		Token::Address(_) => Mediate::Raw(1, token),
 		Token::Bytes(bytes) => Mediate::Prefixed(pad_bytes_len(bytes), token),
@@ -164,8 +164,8 @@ fn encode_token_append(data: &mut Vec<Word>, token: &Token) {
 		Token::Bytes(ref bytes) => pad_bytes_append(data, bytes),
 		Token::String(ref s) => pad_bytes_append(data, s.as_bytes()),
 		Token::FixedBytes(ref bytes) => fixed_bytes_append(data, bytes),
-		Token::Int(int) => data.push(int.into()),
-		Token::Uint(uint) => data.push(uint.into()),
+		Token::Int(int) => data.push(int.to_big_endian()),
+		Token::Uint(uint) => data.push(uint.to_big_endian()),
 		Token::Bool(b) => {
 			let mut value = [0u8; 32];
 			if b {
@@ -527,18 +527,20 @@ mod tests {
 
 	#[test]
 	fn encode_uint() {
+		use crate::Uint;
 		let mut uint = [0u8; 32];
 		uint[31] = 4;
-		let encoded = encode(&[Token::Uint(uint.into())]);
+		let encoded = encode(&[Token::Uint(Uint::from_big_endian(&uint))]);
 		let expected = hex!("0000000000000000000000000000000000000000000000000000000000000004");
 		assert_eq!(encoded, expected);
 	}
 
 	#[test]
 	fn encode_int() {
+		use crate::Int;
 		let mut int = [0u8; 32];
 		int[31] = 4;
-		let encoded = encode(&[Token::Int(int.into())]);
+		let encoded = encode(&[Token::Int(Int::from_big_endian(&int))]);
 		let expected = hex!("0000000000000000000000000000000000000000000000000000000000000004");
 		assert_eq!(encoded, expected);
 	}
@@ -730,7 +732,8 @@ mod tests {
 
 	#[test]
 	fn encode_complex_tuple() {
-		let uint = Token::Uint([0x11u8; 32].into());
+		use crate::Uint;
+		let uint = Token::Uint(Uint::from_big_endian(&[0x11u8; 32]));
 		let string = Token::String("gavofyork".to_owned());
 		let address1 = Token::Address([0x11u8; 20].into());
 		let address2 = Token::Address([0x22u8; 20].into());
